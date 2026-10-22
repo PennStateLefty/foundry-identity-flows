@@ -178,9 +178,11 @@ manifest-parsed locally, not live-provisioned. Follow
 if the extension requests additional project setup. Do not rerun root
 infrastructure provisioning blindly: it declares a placeholder API image.
 
-The container images have **not** been built in the authoring environment:
-the Docker CLI is present but its daemon is unavailable. SDK-backed in-process
-handler/MCP checks are not a substitute for image builds or live deployment.
+Both image types have been built for **linux/amd64** through the configured
+Microsoft package feed and smoke-tested offline. The API image checks health
+and unauthenticated rejection; the hosted image executes the real Responses
+handler with synthetic trusted-context headers. Build-secret contents are absent
+from both images. These checks are **not** live identity-propagation results.
 
 For P04/P05, first run the A2A endpoint configuration script without `--apply`,
 then approve its exact PATCH. **Hosted-target incoming-A2A support is not

@@ -12,6 +12,7 @@ services:
     host: containerapp
     docker:
       path: Dockerfile
+      platform: linux/amd64
       remoteBuild: false
       buildArgs:
         - --secret

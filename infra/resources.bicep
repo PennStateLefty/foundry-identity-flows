@@ -17,6 +17,7 @@ module logs 'br/public:avm/res/operational-insights/workspace:0.16.1' = {
     location: location
     tags: tags
     dataRetention: 30
+    dailyQuotaGb: '1'
     enableTelemetry: false
   }
 }

@@ -1,0 +1,11 @@
+.git
+.azure
+.local
+.env*
+.venv*
+*.egg-info
+__pycache__
+tests
+docs
+results
+.foundry

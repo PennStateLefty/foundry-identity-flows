@@ -1,0 +1,9 @@
+{
+  "tenant_id": "<tenant-id>",
+  "public_client_id": "<public-client-application-id>",
+  "api_client_id": "<middleware-application-id>",
+  "project_endpoint": "https://<account>.services.ai.azure.com/api/projects/<project>",
+  "api_endpoint": "http://127.0.0.1:8000",
+  "agent_a": "identity-agent-a",
+  "agent_b": "identity-agent-b"
+}

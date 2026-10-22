@@ -1,0 +1,383 @@
+{
+  "schema": 1,
+  "results": [
+    {
+      "alias": "user-a",
+      "pattern": "P01",
+      "configuration": "user",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "preserve-user"
+    },
+    {
+      "alias": "user-a",
+      "pattern": "P02",
+      "configuration": "user",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "preserve-user"
+    },
+    {
+      "alias": "user-a",
+      "pattern": "P03",
+      "configuration": "user",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "preserve-user"
+    },
+    {
+      "alias": "user-a",
+      "pattern": "P04",
+      "configuration": "user",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "preserve-user"
+    },
+    {
+      "alias": "user-a",
+      "pattern": "P04",
+      "configuration": "service",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "different-principal-or-denial"
+    },
+    {
+      "alias": "user-a",
+      "pattern": "P04",
+      "configuration": "drop-context",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "different-principal-or-denial"
+    },
+    {
+      "alias": "user-a",
+      "pattern": "P05",
+      "configuration": "user",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "preserve-user"
+    },
+    {
+      "alias": "user-a",
+      "pattern": "P05",
+      "configuration": "service",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "different-principal-or-denial"
+    },
+    {
+      "alias": "user-a",
+      "pattern": "P05",
+      "configuration": "drop-context",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "different-principal-or-denial"
+    },
+    {
+      "alias": "user-a",
+      "pattern": "P06",
+      "configuration": "user",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "preserve-user"
+    },
+    {
+      "alias": "user-a",
+      "pattern": "P06",
+      "configuration": "service",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "different-principal-or-denial"
+    },
+    {
+      "alias": "user-a",
+      "pattern": "P06",
+      "configuration": "drop-context",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "different-principal-or-denial"
+    },
+    {
+      "alias": "user-a",
+      "pattern": "P07",
+      "configuration": "user",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "preserve-user"
+    },
+    {
+      "alias": "user-a",
+      "pattern": "P07",
+      "configuration": "service",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "different-principal-or-denial"
+    },
+    {
+      "alias": "user-a",
+      "pattern": "P07",
+      "configuration": "drop-context",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "different-principal-or-denial"
+    },
+    {
+      "alias": "user-a",
+      "pattern": "P08",
+      "configuration": "user",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "preserve-user"
+    },
+    {
+      "alias": "user-a",
+      "pattern": "P08",
+      "configuration": "service",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "different-principal-or-denial"
+    },
+    {
+      "alias": "user-a",
+      "pattern": "P08",
+      "configuration": "drop-context",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "different-principal-or-denial"
+    },
+    {
+      "alias": "user-a",
+      "pattern": "P09",
+      "configuration": "user",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "preserve-user"
+    },
+    {
+      "alias": "user-a",
+      "pattern": "P09",
+      "configuration": "service",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "different-principal-or-denial"
+    },
+    {
+      "alias": "user-a",
+      "pattern": "P09",
+      "configuration": "drop-context",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "different-principal-or-denial"
+    },
+    {
+      "alias": "user-b",
+      "pattern": "P01",
+      "configuration": "user",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "preserve-user"
+    },
+    {
+      "alias": "user-b",
+      "pattern": "P02",
+      "configuration": "user",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "preserve-user"
+    },
+    {
+      "alias": "user-b",
+      "pattern": "P03",
+      "configuration": "user",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "preserve-user"
+    },
+    {
+      "alias": "user-b",
+      "pattern": "P04",
+      "configuration": "user",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "preserve-user"
+    },
+    {
+      "alias": "user-b",
+      "pattern": "P04",
+      "configuration": "service",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "different-principal-or-denial"
+    },
+    {
+      "alias": "user-b",
+      "pattern": "P04",
+      "configuration": "drop-context",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "different-principal-or-denial"
+    },
+    {
+      "alias": "user-b",
+      "pattern": "P05",
+      "configuration": "user",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "preserve-user"
+    },
+    {
+      "alias": "user-b",
+      "pattern": "P05",
+      "configuration": "service",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "different-principal-or-denial"
+    },
+    {
+      "alias": "user-b",
+      "pattern": "P05",
+      "configuration": "drop-context",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "different-principal-or-denial"
+    },
+    {
+      "alias": "user-b",
+      "pattern": "P06",
+      "configuration": "user",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "preserve-user"
+    },
+    {
+      "alias": "user-b",
+      "pattern": "P06",
+      "configuration": "service",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "different-principal-or-denial"
+    },
+    {
+      "alias": "user-b",
+      "pattern": "P06",
+      "configuration": "drop-context",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "different-principal-or-denial"
+    },
+    {
+      "alias": "user-b",
+      "pattern": "P07",
+      "configuration": "user",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "preserve-user"
+    },
+    {
+      "alias": "user-b",
+      "pattern": "P07",
+      "configuration": "service",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "different-principal-or-denial"
+    },
+    {
+      "alias": "user-b",
+      "pattern": "P07",
+      "configuration": "drop-context",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "different-principal-or-denial"
+    },
+    {
+      "alias": "user-b",
+      "pattern": "P08",
+      "configuration": "user",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "preserve-user"
+    },
+    {
+      "alias": "user-b",
+      "pattern": "P08",
+      "configuration": "service",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "different-principal-or-denial"
+    },
+    {
+      "alias": "user-b",
+      "pattern": "P08",
+      "configuration": "drop-context",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "different-principal-or-denial"
+    },
+    {
+      "alias": "user-b",
+      "pattern": "P09",
+      "configuration": "user",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "preserve-user"
+    },
+    {
+      "alias": "user-b",
+      "pattern": "P09",
+      "configuration": "service",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "different-principal-or-denial"
+    },
+    {
+      "alias": "user-b",
+      "pattern": "P09",
+      "configuration": "drop-context",
+      "status": "NOT RUN",
+      "reason": "not-run",
+      "observation": "unavailable",
+      "expectation": "different-principal-or-denial"
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+name: foundry-identity-agents
+requiredVersions:
+  azd: ">=1.36.0"
+  extensions:
+    azure.ai.agents: ">=1.0.0-beta.9"
+infra:
+  provider: microsoft.foundry
+services:
+  identity-agent-a:
+    host: azure.ai.agent
+    kind: hosted
+    name: identity-agent-a
+    project: ..
+    language: python
+    protocols:
+      - protocol: responses
+        version: 2.0.0
+    docker:
+      path: Dockerfile.hosted
+      remoteBuild: false
+      buildArgs:
+        - --secret
+        - id=pip_config,src=${PIP_CONFIG_FILE}
+    container:
+      resources:
+        cpu: "0.5"
+        memory: 1Gi
+    env:
+      LAB_AGENT_B_NAME: identity-agent-b
+      TOOLBOX_USER_ENDPOINT: ${TOOLBOX_USER_ENDPOINT}
+      TOOLBOX_SERVICE_ENDPOINT: ${TOOLBOX_SERVICE_ENDPOINT}
+      A2A_USER_TOOL: ${A2A_USER_TOOL}
+      A2A_SERVICE_TOOL: ${A2A_SERVICE_TOOL}
+      MCP_USER_TOOL: ${MCP_USER_TOOL}
+      MCP_SERVICE_TOOL: ${MCP_SERVICE_TOOL}
+      A2A_ARGS_JSON: ${A2A_ARGS_JSON}
+      MCP_ARGS_JSON: ${MCP_ARGS_JSON}
+  identity-agent-b:
+    host: azure.ai.agent
+    kind: hosted
+    name: identity-agent-b
+    project: ..
+    language: python
+    protocols:
+      - protocol: responses
+        version: 2.0.0
+    docker:
+      path: Dockerfile.hosted
+      remoteBuild: false
+      buildArgs:
+        - --secret
+        - id=pip_config,src=${PIP_CONFIG_FILE}
+    container:
+      resources:
+        cpu: "0.5"
+        memory: 1Gi

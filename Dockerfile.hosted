@@ -1,0 +1,11 @@
+FROM mcr.microsoft.com/devcontainers/python:3.13-bookworm
+WORKDIR /app
+COPY pyproject.toml ./
+COPY requirements.lock.txt ./
+COPY src ./src
+COPY hosted ./hosted
+RUN --mount=type=secret,id=pip_config,required=true,target=/etc/pip.conf \
+    python -m pip install --no-cache-dir -c requirements.lock.txt '.[hosted]'
+USER vscode
+EXPOSE 8088
+CMD ["python", "hosted/main.py"]

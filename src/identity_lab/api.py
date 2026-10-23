@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 import os
 import re
 
-from .auth import USER_CLAIMS, USER_TOKEN, obo, validate
+from .auth import USER_CLAIMS, USER_TOKEN, obo, validate, workload_credential
 from .catalog import PATTERNS
 from .transport import FOUNDRY_SCOPE, invoke, responses_url
 
@@ -93,8 +93,7 @@ def create_app():
             except PermissionError:
                 raise HTTPException(403, "Delegated token acquisition failed.") from None
         else:
-            from azure.identity.aio import DefaultAzureCredential
-            async with DefaultAzureCredential() as credential:
+            async with workload_credential() as credential:
                 token = (await credential.get_token(FOUNDRY_SCOPE)).token
             headers["x-ms-user-identity"] = USER_CLAIMS.get()["oid"]
         return await invoke(

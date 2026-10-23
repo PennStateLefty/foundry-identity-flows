@@ -3,11 +3,11 @@
 import json
 import os
 
+from .auth import workload_credential
 from .transport import FOUNDRY_SCOPE, context_headers, invoke, require_https, responses_url
 
 
 async def call_toolbox(route: str, configuration: str, call_id: str | None) -> dict:
-    from azure.identity.aio import DefaultAzureCredential
     import httpx
     from mcp import ClientSession
     from mcp.client.streamable_http import streamable_http_client
@@ -15,7 +15,7 @@ async def call_toolbox(route: str, configuration: str, call_id: str | None) -> d
     suffix = "SERVICE" if configuration == "service" else "USER"
     endpoint = require_https(os.environ[f"TOOLBOX_{suffix}_ENDPOINT"])
     tool_name = os.environ[f"{route.upper()}_{suffix}_TOOL"]
-    async with DefaultAzureCredential() as credential:
+    async with workload_credential() as credential:
         token = (await credential.get_token(FOUNDRY_SCOPE)).token
     headers = {
         "Authorization": f"Bearer {token}",
@@ -42,7 +42,6 @@ async def call_toolbox(route: str, configuration: str, call_id: str | None) -> d
 def create_server():
     from azure.ai.agentserver.core import get_request_context
     from azure.ai.agentserver.responses import ResponsesAgentServerHost, TextResponse
-    from azure.identity.aio import DefaultAzureCredential
 
     server = ResponsesAgentServerHost(configure_observability=None, access_log=None)
 
@@ -60,7 +59,7 @@ def create_server():
                 "call_context_present": bool(current.call_id),
             }
         elif route == "chain":
-            async with DefaultAzureCredential() as credential:
+            async with workload_credential() as credential:
                 token = (await credential.get_token(FOUNDRY_SCOPE)).token
             result = await invoke(
                 responses_url(os.environ["FOUNDRY_PROJECT_ENDPOINT"], os.environ["LAB_AGENT_B_NAME"]),

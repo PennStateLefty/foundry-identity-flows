@@ -31,6 +31,12 @@ and Conditional Access errors stop the request. Production integrations should
 implement the full claims-challenge roundtrip; this lab marks interaction-blocked
 cases BLOCKED and requires consent before running.
 
+Workload authentication is also explicit: the platform uses its federated
+workload credential when `AZURE_FEDERATED_TOKEN_FILE` is injected, otherwise its
+managed identity. It never silently falls back to a developer's CLI credentials.
+For an intentionally local workload experiment only, set
+`LAB_WORKLOAD_AUTH=azure-cli` with the approved `LAB_TENANT_ID`.
+
 Source: [Entra OBO](https://learn.microsoft.com/entra/identity-platform/v2-oauth2-on-behalf-of-flow).
 
 ## Backend delegation

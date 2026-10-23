@@ -70,6 +70,18 @@ Foundry permission, required consent, and a confidential API credential. The
 script intentionally creates no credential, consent grant, user, or role
 assignment. Follow tenant policy; do not bypass Conditional Access.
 
+`python scripts/permissions.py --tenant "<tenant-id>"` inspects the exact
+delegated permission declaration plan for these two apps; `--apply` plus typed
+confirmation configures the declarations only. It discovers the existing
+Foundry resource and scope definitions instead of hardcoding application IDs.
+It grants no consent, Graph permissions, or application permissions.
+
+For an explicitly approved 24-hour API credential, run
+`python scripts/credential.py --tenant "<tenant-id>"` to inspect the plan, then
+add `--apply` and confirm. It uses the non-destructive `addPassword` operation,
+records each request locally, refuses automatic repeats, and saves the secret
+with owner-only access. It never prints the value or replaces existing credentials.
+
 The runtime accepts version-2 API access tokens with audience equal to the API
 application's client ID. The API scope is `api://<application-id>/access_as_user`.
 

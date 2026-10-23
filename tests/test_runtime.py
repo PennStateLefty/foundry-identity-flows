@@ -122,5 +122,28 @@ class HostedTests(unittest.IsolatedAsyncioTestCase):
         self.assertTrue(probe["call_context_present"])
 
 
+@unittest.skipUnless(importlib.util.find_spec("fastapi"), "Runtime dependencies are not installed.")
+class CredentialSelectionTests(unittest.TestCase):
+    def test_platform_does_not_fall_back_to_developer_credentials(self):
+        from identity_lab.auth import workload_credential
+        with patch.dict(os.environ, {"AZURE_CLIENT_ID": "expected-workload"}, clear=True), \
+             patch("azure.identity.aio.ManagedIdentityCredential") as managed:
+            workload_credential()
+        managed.assert_called_once_with(client_id="expected-workload")
+
+    def test_injected_federated_credential_is_selected_explicitly(self):
+        from identity_lab.auth import workload_credential
+        with patch.dict(os.environ, {"AZURE_FEDERATED_TOKEN_FILE": "/test/token"}, clear=True), \
+             patch("azure.identity.aio.WorkloadIdentityCredential") as workload:
+            workload_credential()
+        workload.assert_called_once_with()
+
+    def test_unknown_mode_is_rejected(self):
+        from identity_lab.auth import workload_credential
+        with patch.dict(os.environ, {"LAB_WORKLOAD_AUTH": "unexpected"}, clear=True):
+            with self.assertRaises(ValueError):
+                workload_credential()
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -7,6 +7,7 @@ import re
 
 from .auth import workload_credential
 from .catalog import PATTERNS
+from .errors import ERROR_STATUS
 
 _ACTIVE: ContextVar = ContextVar("lab_telemetry", default=None)
 _OPERATIONS = {
@@ -19,6 +20,7 @@ _VALUES = {
     "lab.pattern": set(PATTERNS),
     "lab.configuration": {"user", "service", "drop-context"},
     "lab.route": {"probe", "chain", "a2a", "mcp"},
+    "lab.error.code": set(ERROR_STATUS),
 }
 
 

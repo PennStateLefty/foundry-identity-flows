@@ -7,6 +7,7 @@ import re
 
 from .auth import USER_CLAIMS, USER_TOKEN, obo, validate, workload_credential
 from .catalog import PATTERNS
+from .errors import LabError
 from .telemetry import Telemetry, TraceBoundary, annotate, operation
 from .transport import FOUNDRY_SCOPE, invoke, responses_url
 
@@ -64,6 +65,11 @@ def create_app():
             telemetry.close()
 
     app = FastAPI(lifespan=lifespan)
+
+    @app.exception_handler(LabError)
+    async def operational_error(request, error):
+        annotate({"lab.error.code": error.code})
+        return JSONResponse(error.public(), status_code=error.status)
 
     @app.exception_handler(httpx.HTTPError)
     async def upstream_error(request, error):

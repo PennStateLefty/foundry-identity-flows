@@ -59,6 +59,35 @@ No broader agent-write role was granted to bypass the guest's B denial.
 The earlier single-operator table is historical, not the latest matrix count.
 Toolbox/A2A/MCP configuration and the P03 permission boundary remain unresolved.
 
+## Execution errors found before further identity testing
+
+All 26 previously unattempted configurations were submitted for the two users
+against the unchanged deployment. They returned execution errors without probes,
+not usable identity observations. Do not treat those attempts as a completed
+identity baseline or infer an authorization outcome from their HTTP 500/502.
+
+Runtime logs and correlated Application Insights spans established:
+
+| Execution defect | Repair and live outcome |
+|---|---|
+| P03 asynchronous managed-identity initialization raised missing `aiohttp` | Explicit runtime dependency added; live workload authentication succeeds, followed by upstream Foundry HTTP 403 |
+| Empty toolbox settings raised an unhandled endpoint-validation exception | Fixed allowlisted diagnostic identifies missing configuration; middleware returns 503 instead of generic upstream 502 |
+| Empty toolbox argument settings would fail JSON decoding after configuration | Empty values now mean `{}`; malformed/non-object values are explicit configuration errors |
+
+The repaired API and hosted agent version 3 retain the existing roles and
+connections. The live P03 middleware response is still HTTP 502 for its upstream
+403; dependency telemetry exposes that upstream status. No impersonation
+permission was silently added. Direct A/B probes still return trusted identity.
+Handler spans and middleware responses identify `toolbox-not-configured`;
+the hosted protocol's completed envelope is not an identity success.
+See [diagnostic behavior](observability.md#diagnosing-execution-errors-before-identity-tests).
+
+The guest's latest direct-B probe succeeded with a distinct identity, without
+another permission change. Earlier blocked observations remain historical;
+new baselines do not retroactively turn earlier cases into passing evidence.
+Toolbox connections, tool discovery, OAuth consent, and conditional hosted A2A
+support still require setup before valid end-to-end measurements.
+
 ## Prerequisites and approval boundary
 
 Use Python 3.12+, Azure CLI, Bicep, Azure Developer CLI 1.36+, the

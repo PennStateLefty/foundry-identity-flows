@@ -28,8 +28,10 @@ def context_headers(call_id: str | None, *, forward: bool = True) -> dict[str, s
 
 
 async def invoke(url: str, token: str, headers: dict[str, str], text: str) -> dict:
+    import json
     import httpx
 
+    from .errors import LabError, ERROR_STATUS
     from .telemetry import operation, record_status, trace_headers
     with operation("foundry.responses", attributes={"http.request.method": "POST"}):
         async with httpx.AsyncClient(timeout=120, follow_redirects=False) as client:
@@ -43,4 +45,21 @@ async def invoke(url: str, token: str, headers: dict[str, str], text: str) -> di
             body = response.json()
         if body.get("status") != "completed":
             raise RuntimeError("Foundry response did not complete.")
+        for item in body.get("output", []):
+            if not isinstance(item, dict):
+                continue
+            for content in item.get("content", []):
+                if not isinstance(content, dict):
+                    continue
+                if content.get("type") != "output_text":
+                    continue
+                try:
+                    value = json.loads(content["text"])
+                except (ValueError, KeyError):
+                    continue
+                if isinstance(value, dict) and value.get("kind") == "identity-lab-error-v1":
+                    code = value.get("code")
+                    if not isinstance(code, str) or code not in ERROR_STATUS:
+                        raise RuntimeError("Unknown upstream operational error.")
+                    raise LabError(code)
     return body

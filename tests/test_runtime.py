@@ -69,6 +69,18 @@ class ApiTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(response.status_code, 502)
         self.assertNotIn("private-upstream-destination", response.text)
 
+    async def test_toolbox_prerequisite_is_explicit_not_generic_gateway_error(self):
+        from identity_lab.errors import LabError
+        with patch("identity_lab.api.validate", return_value={"oid": "test-user"}), \
+             patch("identity_lab.api.obo", return_value="test-token"), \
+             patch("identity_lab.api.invoke", side_effect=LabError("toolbox-not-configured")):
+            response = await self.client.post("/invoke", headers={"Authorization": "Bearer test"},
+                                              json={"pattern": "P05"})
+        self.assertEqual(response.status_code, 503)
+        self.assertEqual(response.json(), {
+            "kind": "identity-lab-error-v1", "code": "toolbox-not-configured",
+        })
+
     async def test_mcp_context_survives_stateless_transport(self):
         import httpx
         from mcp import ClientSession
@@ -124,6 +136,15 @@ class HostedTests(unittest.IsolatedAsyncioTestCase):
 
 @unittest.skipUnless(importlib.util.find_spec("fastapi"), "Runtime dependencies are not installed.")
 class CredentialSelectionTests(unittest.TestCase):
+    def test_real_async_managed_identity_transport_can_be_constructed(self):
+        from identity_lab.auth import workload_credential
+        with patch.dict(os.environ, {
+            "IDENTITY_ENDPOINT": "http://localhost:12345/token",
+            "IDENTITY_HEADER": "synthetic-test-header",
+        }, clear=True):
+            credential = workload_credential()
+        self.assertIsNotNone(credential)
+
     def test_platform_does_not_fall_back_to_developer_credentials(self):
         from identity_lab.auth import workload_credential
         with patch.dict(os.environ, {"AZURE_CLIENT_ID": "expected-workload"}, clear=True), \
@@ -143,6 +164,54 @@ class CredentialSelectionTests(unittest.TestCase):
         with patch.dict(os.environ, {"LAB_WORKLOAD_AUTH": "unexpected"}, clear=True):
             with self.assertRaises(ValueError):
                 workload_credential()
+
+
+@unittest.skipUnless(importlib.util.find_spec("fastapi"), "Runtime dependencies are not installed.")
+class OperationalErrorTests(unittest.IsolatedAsyncioTestCase):
+    async def test_unconfigured_routes_stop_before_authentication(self):
+        from identity_lab.errors import LabError
+        from identity_lab.hosted import call_toolbox
+        with patch.dict(os.environ, {}, clear=True), \
+             patch("identity_lab.hosted.workload_credential") as credential:
+            for route in ("a2a", "mcp"):
+                for mode in ("user", "service", "drop-context"):
+                    with self.assertRaisesRegex(LabError, "toolbox-not-configured"):
+                        await call_toolbox(route, mode, "synthetic-call")
+            credential.assert_not_called()
+
+    async def test_empty_arguments_mean_no_arguments_and_invalid_arguments_are_explicit(self):
+        from identity_lab.errors import LabError
+        from identity_lab.hosted import call_toolbox
+        with patch.dict(os.environ, {
+            "TOOLBOX_USER_ENDPOINT": "https://example.com/toolbox",
+            "MCP_USER_TOOL": "invoke_agent_b", "MCP_ARGS_JSON": "[]",
+        }), patch("identity_lab.hosted.workload_credential") as credential:
+            with self.assertRaisesRegex(LabError, "toolbox-schema-invalid"):
+                await call_toolbox("mcp", "user", None)
+            credential.assert_not_called()
+            with patch.dict(os.environ, {"MCP_ARGS_JSON": ""}):
+                credential.side_effect = RuntimeError("synthetic-auth-boundary")
+                with self.assertRaisesRegex(RuntimeError, "synthetic-auth-boundary"):
+                    await call_toolbox("mcp", "user", None)
+                credential.assert_called_once_with()
+
+    async def test_hosted_error_envelope_propagates_through_real_transport(self):
+        import httpx
+        from identity_lab.errors import LabError
+        from identity_lab.hosted import create_server
+        from identity_lab.transport import invoke
+        try:
+            server = create_server()
+        except ModuleNotFoundError:
+            self.skipTest("Hosted dependency is not installed.")
+        async with server.router.lifespan_context(server):
+            client = httpx.AsyncClient(transport=httpx.ASGITransport(app=server), base_url="http://test")
+            with patch.dict(os.environ, {"TOOLBOX_USER_ENDPOINT": "", "A2A_USER_TOOL": ""}), \
+                 patch("httpx.AsyncClient", return_value=client):
+                with self.assertRaisesRegex(LabError, "toolbox-not-configured"):
+                    await invoke("http://test/responses", "synthetic-token", {
+                        "x-client-route": "a2a",
+                    }, "identity probe")
 
 
 if __name__ == "__main__":

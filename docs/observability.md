@@ -5,6 +5,31 @@ API HTTP 200/401, hosted HTTP 200, A-to-B dependency spans, and cross-agent pare
 links were observed. This does not establish passing identity propagation.
 See the [bounded smoke results](deployment.md#recorded-single-operator-smoke).
 
+## Diagnosing execution errors before identity tests
+
+The 2026-10-23 baseline exposed two execution defects, not identity failures:
+the API image lacked `aiohttp` for asynchronous managed-identity authentication,
+and unconfigured toolbox routes raised a generic endpoint-validation exception.
+`aiohttp` is now an explicit constrained runtime dependency. Image regression
+checks construct the actual asynchronous credential without contacting Azure.
+
+Toolbox routes validate endpoints, tool names and JSON argument objects before
+requesting credentials. An empty argument setting means `{}`, not invalid JSON.
+Known prerequisite failures return a fixed `identity-lab-error-v1` diagnostic
+with `toolbox-not-configured`, `toolbox-schema-invalid`, or
+`toolbox-tool-unavailable`; these are not identity probes or successful tests.
+The middleware maps them to HTTP 503. A tool-reported execution failure maps
+to HTTP 502. Unexpected defects are not silently converted into prerequisites.
+
+The hosted Responses protocol carries this diagnostic as output text; its
+completed HTTP 200 envelope does not mean the tool executed. The lab transport
+recognizes the fixed diagnostic and raises it for the middleware or caller.
+The handler span records the allowlisted `lab.error.code` and failure status
+without raw exception messages, tokens, endpoints or user identifiers.
+Query `customDimensions['lab.error.code']` on handler dependencies alongside
+request/dependency HTTP outcomes. Toolbox connections still require explicit
+configuration and consent; diagnostic handling does not configure them.
+
 **Remaining gap:** Container Apps console/system persistence is NOT VERIFIED.
 Both enabled categories and the correct workspace were read back; direct live
 streaming and a named-revision cold start worked. No console/system rows appeared

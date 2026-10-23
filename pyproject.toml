@@ -9,6 +9,7 @@ description = "Reproducible Microsoft Foundry identity propagation experiments"
 requires-python = ">=3.11"
 dependencies = [
   "azure-identity>=1.25,<2",
+  "aiohttp>=3.14.5,<4",
   "azure-monitor-opentelemetry-exporter>=1.0.0b58,<2",
   "opentelemetry-sdk>=1.45.1,<2",
   "httpx>=0.28,<1",

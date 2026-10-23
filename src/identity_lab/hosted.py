@@ -5,7 +5,8 @@ import os
 from contextlib import asynccontextmanager
 
 from .auth import workload_credential
-from .telemetry import Telemetry, TraceBoundary, annotate, operation, trace_headers
+from .errors import LabError
+from .telemetry import Telemetry, TraceBoundary, annotate, operation, record_status, trace_headers
 from .transport import FOUNDRY_SCOPE, context_headers, invoke, require_https, responses_url
 
 
@@ -26,8 +27,20 @@ async def call_toolbox(route: str, configuration: str, call_id: str | None) -> d
     from mcp.client.streamable_http import streamable_http_client
 
     suffix = "SERVICE" if configuration == "service" else "USER"
-    endpoint = require_https(os.environ[f"TOOLBOX_{suffix}_ENDPOINT"])
-    tool_name = os.environ[f"{route.upper()}_{suffix}_TOOL"]
+    endpoint = os.environ.get(f"TOOLBOX_{suffix}_ENDPOINT", "")
+    tool_name = os.environ.get(f"{route.upper()}_{suffix}_TOOL", "")
+    try:
+        endpoint = require_https(endpoint)
+    except ValueError:
+        raise LabError("toolbox-not-configured") from None
+    if not tool_name:
+        raise LabError("toolbox-not-configured")
+    try:
+        args = json.loads(os.environ.get(f"{route.upper()}_ARGS_JSON") or "{}")
+    except ValueError:
+        raise LabError("toolbox-schema-invalid") from None
+    if not isinstance(args, dict):
+        raise LabError("toolbox-schema-invalid")
     with operation("auth.workload"):
         async with workload_credential() as credential:
             token = (await credential.get_token(FOUNDRY_SCOPE)).token
@@ -43,14 +56,13 @@ async def call_toolbox(route: str, configuration: str, call_id: str | None) -> d
                     tools = await session.list_tools()
                     selected = next((tool for tool in tools.tools if tool.name == tool_name), None)
                     if selected is None:
-                        raise ValueError("Configured toolbox tool was not discovered.")
-                    args = json.loads(os.environ.get(f"{route.upper()}_ARGS_JSON", "{}"))
+                        raise LabError("toolbox-tool-unavailable")
                     required = selected.inputSchema.get("required", [])
                     if any(key not in args for key in required):
-                        raise ValueError("Configure tool arguments from its discovered input schema.")
+                        raise LabError("toolbox-schema-invalid")
                     result = await session.call_tool(tool_name, args)
                     if result.isError:
-                        raise RuntimeError("Toolbox tool reported an error.")
+                        raise LabError("toolbox-execution-failed")
                     return result.model_dump(mode="json")
 
 
@@ -100,7 +112,12 @@ def create_server():
                     "Report the trusted request identity.",
                 )
             elif route in ("a2a", "mcp"):
-                result = await call_toolbox(route, configuration, current.call_id)
+                try:
+                    result = await call_toolbox(route, configuration, current.call_id)
+                except LabError as error:
+                    annotate({"lab.error.code": error.code})
+                    record_status(error.status)
+                    result = error.public()
             else:
                 raise ValueError("Unknown route.")
             return TextResponse(context, request, text=json.dumps(result))

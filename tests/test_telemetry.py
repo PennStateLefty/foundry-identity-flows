@@ -61,6 +61,18 @@ class TelemetryTests(unittest.TestCase):
                     self.fail("Unexpected telemetry attribute was accepted.")
         self.assertFalse(self.spans())
 
+    def test_operational_error_code_is_allowlisted_without_raw_error_text(self):
+        with self.telemetry.span("agent.handler"):
+            annotate({"lab.error.code": "toolbox-not-configured"})
+            record_status(503)
+        span = self.spans()[0]
+        self.assertEqual(span.attributes["lab.error.code"], "toolbox-not-configured")
+        self.assertEqual(span.attributes["http.response.status_code"], 503)
+        with self.assertRaisesRegex(ValueError, "allowlisted"):
+            annotate_values = {"lab.error.code": "private-arbitrary-exception"}
+            with self.telemetry.span("agent.handler", attributes=annotate_values):
+                pass
+
     def test_headers_preserve_only_w3c_trace_context(self):
         with self.telemetry.span("api.request"):
             with operation("foundry.responses"):

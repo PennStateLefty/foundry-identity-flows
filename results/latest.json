@@ -195,7 +195,7 @@
       "pattern": "P01",
       "configuration": "user",
       "status": "BLOCKED",
-      "reason": "baseline-unavailable",
+      "reason": "prerequisite",
       "observation": "unavailable",
       "expectation": "preserve-user"
     },
@@ -204,7 +204,7 @@
       "pattern": "P02",
       "configuration": "user",
       "status": "BLOCKED",
-      "reason": "baseline-unavailable",
+      "reason": "prerequisite",
       "observation": "unavailable",
       "expectation": "preserve-user"
     },
@@ -276,7 +276,7 @@
       "pattern": "P06",
       "configuration": "user",
       "status": "BLOCKED",
-      "reason": "baseline-unavailable",
+      "reason": "prerequisite",
       "observation": "unavailable",
       "expectation": "preserve-user"
     },
@@ -285,7 +285,7 @@
       "pattern": "P06",
       "configuration": "service",
       "status": "BLOCKED",
-      "reason": "baseline-unavailable",
+      "reason": "prerequisite",
       "observation": "unavailable",
       "expectation": "different-principal-or-denial"
     },
@@ -294,7 +294,7 @@
       "pattern": "P06",
       "configuration": "drop-context",
       "status": "BLOCKED",
-      "reason": "baseline-unavailable",
+      "reason": "prerequisite",
       "observation": "unavailable",
       "expectation": "different-principal-or-denial"
     },
@@ -303,7 +303,7 @@
       "pattern": "P07",
       "configuration": "user",
       "status": "BLOCKED",
-      "reason": "baseline-unavailable",
+      "reason": "prerequisite",
       "observation": "unavailable",
       "expectation": "preserve-user"
     },
@@ -312,7 +312,7 @@
       "pattern": "P07",
       "configuration": "service",
       "status": "BLOCKED",
-      "reason": "baseline-unavailable",
+      "reason": "prerequisite",
       "observation": "unavailable",
       "expectation": "different-principal-or-denial"
     },
@@ -321,7 +321,7 @@
       "pattern": "P07",
       "configuration": "drop-context",
       "status": "BLOCKED",
-      "reason": "baseline-unavailable",
+      "reason": "prerequisite",
       "observation": "unavailable",
       "expectation": "different-principal-or-denial"
     },
@@ -379,13 +379,5 @@
       "observation": "unavailable",
       "expectation": "different-principal-or-denial"
     }
-  ],
-  "interactive_observation": {
-    "date": "2026-10-23",
-    "accounts": "two distinct users in one target tenant; one member and one guest",
-    "direct_a_identities_distinct": true,
-    "obo_matches_direct_a_for_both_users": true,
-    "guest_direct_b_baseline": "BLOCKED",
-    "methodology": "Strict matrix retains direct B baseline requirement; A-only continuity is supplemental."
-  }
+  ]
 }

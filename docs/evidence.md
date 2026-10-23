@@ -7,7 +7,7 @@
 | PASS | The measured outcome satisfies the explicitly recorded expectation. |
 | FAIL | A valid observation contradicts the expectation. |
 | BLOCKED | Authentication, consent, infrastructure, schema, or harness prerequisites prevented measurement. |
-| NOT RUN | No live observation exists. |
+| NOT RUN | Required two-user observation has not run; deployment smoke results are recorded separately. |
 
 Negative tests can PASS when they demonstrate changed identity. A blanket HTTP
 denial is not enough: it may originate from a proxy, discovery, or expired token,

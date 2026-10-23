@@ -34,6 +34,7 @@ call-ID mechanism.
 8. Public evidence MUST contain only aliases and allowlisted outcomes.
 9. Configuration failures MUST NOT satisfy negative authorization expectations.
 10. Conditional or unsupported platform combinations MUST remain BLOCKED or NOT RUN.
+11. Operational trace context MUST NOT substitute for delegated credentials, Foundry call context, or identity evidence.
 
 The [README index](../README.md#pattern-index) defines P01-P09, diagrams, concise
 steps, and per-pattern acceptance criteria. The runner exercises three entry
@@ -46,6 +47,11 @@ direct Responses chaining. They are not independent authentication mechanisms
 in that transport. Tool connections can choose genuinely different principals.
 Missing identity is a failed observation; ambiguous/missing protocol output is
 a blocked harness case.
+
+The reference single-operator deployment returned a present call context but no
+B user identity for both Responses chaining configurations. Call-ID forwarding
+MUST NOT be presented as verified Responses user delegation. These smoke results
+do not replace the required two-user matrix; see [deployment observations](deployment.md#recorded-single-operator-smoke).
 
 ## Support and trust limits
 

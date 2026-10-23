@@ -30,14 +30,17 @@ def context_headers(call_id: str | None, *, forward: bool = True) -> dict[str, s
 async def invoke(url: str, token: str, headers: dict[str, str], text: str) -> dict:
     import httpx
 
-    async with httpx.AsyncClient(timeout=120, follow_redirects=False) as client:
-        response = await client.post(
-            url,
-            headers={**headers, "Authorization": f"Bearer {token}"},
-            json={"input": text, "stream": False, "store": False, "background": False},
-        )
-        response.raise_for_status()
-        body = response.json()
-    if body.get("status") != "completed":
-        raise RuntimeError("Foundry response did not complete.")
+    from .telemetry import operation, record_status, trace_headers
+    with operation("foundry.responses", attributes={"http.request.method": "POST"}):
+        async with httpx.AsyncClient(timeout=120, follow_redirects=False) as client:
+            response = await client.post(
+                url,
+                headers={**headers, **trace_headers(), "Authorization": f"Bearer {token}"},
+                json={"input": text, "stream": False, "store": False, "background": False},
+            )
+            record_status(response.status_code)
+            response.raise_for_status()
+            body = response.json()
+        if body.get("status") != "completed":
+            raise RuntimeError("Foundry response did not complete.")
     return body

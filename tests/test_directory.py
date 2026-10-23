@@ -17,6 +17,8 @@ def load_script(name):
 
 
 credential = load_script("credential")
+rbac = load_script("rbac")
+renderer = load_script("render_agents")
 with patch.dict("sys.modules", {"credential": credential}):
     permissions = load_script("permissions")
 
@@ -156,6 +158,65 @@ class PermissionDeclarationTests(unittest.TestCase):
             run.return_value.returncode = 0
             run.return_value.stdout = ""
             self.assertIsNone(credential.az("rest", "--method", "PATCH"))
+
+
+class TelemetryRoleScopeTests(unittest.TestCase):
+    def run_plan(self, scope):
+        argv = [
+            "rbac.py", "--tenant", "test-tenant", "--principal", "test-workload",
+            "--principal-type", "ServicePrincipal", "--scope", scope,
+            "--role", "Monitoring Metrics Publisher",
+        ]
+        with patch("sys.argv", argv), \
+             patch.object(rbac, "command", return_value={"tenantId": "test-tenant"}) as command, \
+             redirect_stdout(io.StringIO()):
+            try:
+                rbac.main()
+            finally:
+                command.assert_called_once_with("account", "show")
+
+    def test_publisher_dry_run_accepts_exact_component_without_writes(self):
+        self.run_plan("/subscriptions/test/resourceGroups/lab/providers/Microsoft.Insights/components/lab")
+
+    def test_publisher_rejects_broader_and_child_scopes(self):
+        for scope in (
+            "/subscriptions/test",
+            "/subscriptions/test/resourceGroups/lab",
+            "/subscriptions/test/resourceGroups/lab/providers/Microsoft.Insights/components/",
+            "/subscriptions/test/resourceGroups/lab/providers/Microsoft.Insights/components/lab/child/x",
+        ):
+            with self.subTest(scope=scope), self.assertRaises(ValueError):
+                self.run_plan(scope)
+
+
+class AgentManifestRenderingTests(unittest.TestCase):
+    def test_render_pins_both_images_without_expanding_secrets(self):
+        template = Path("agents/azure.yaml").read_text()
+        image = "example.invalid/identity-hosted@sha256:" + "a" * 64
+        with tempfile.TemporaryDirectory() as directory, patch.object(renderer, "ROOT", Path(directory)):
+            root = Path(directory)
+            (root / "agents").mkdir()
+            (root / "agents/azure.yaml").write_text(template)
+            output = root / ".local/agents/azure.yaml"
+            renderer.render(image, output)
+            content = output.read_text()
+            self.assertEqual(content.count(image), 2)
+            self.assertEqual(content.count("    project: .\n"), 2)
+            self.assertIn("${APPLICATIONINSIGHTS_CONNECTION_STRING}", content)
+            self.assertEqual(output.stat().st_mode & 0o777, 0o600)
+            with self.assertRaises(FileExistsError):
+                renderer.render(image, output)
+
+    def test_render_rejects_mutable_or_credential_bearing_images(self):
+        for image in ("example.invalid/agent:latest", "https://user:secret@example.invalid/agent",
+                      "example.invalid/agent@sha256:" + "a" * 64 + "\ninjected: true"):
+            with self.subTest(image=image), self.assertRaises(ValueError):
+                renderer.render(image, Path(".local/agents/azure.yaml"))
+
+    def test_render_rejects_public_output_paths(self):
+        image = "example.invalid/agent@sha256:" + "a" * 64
+        with self.assertRaisesRegex(ValueError, "ignored"):
+            renderer.render(image, Path("agents/rendered.yaml"))
 
 
 if __name__ == "__main__":

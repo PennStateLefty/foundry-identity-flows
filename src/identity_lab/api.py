@@ -7,6 +7,7 @@ import re
 
 from .auth import USER_CLAIMS, USER_TOKEN, obo, validate, workload_credential
 from .catalog import PATTERNS
+from .telemetry import Telemetry, TraceBoundary, annotate, operation
 from .transport import FOUNDRY_SCOPE, invoke, responses_url
 
 
@@ -35,6 +36,7 @@ def create_app():
     if public_host:
         allowed_hosts.append(public_host)
         allowed_origins.append(f"https://{public_host}")
+    telemetry = Telemetry("identity-api")
     mcp = FastMCP(
         "identity-wrapper", stateless_http=True, json_response=True,
         transport_security=TransportSecuritySettings(
@@ -46,7 +48,8 @@ def create_app():
     @mcp.tool()
     async def invoke_agent_b() -> dict:
         """Invoke Foundry B using an OBO token representing the authenticated user."""
-        token = await asyncio.to_thread(obo, USER_TOKEN.get())
+        with operation("auth.obo"):
+            token = await asyncio.to_thread(obo, USER_TOKEN.get())
         return await invoke(
             responses_url(os.environ["FOUNDRY_PROJECT_ENDPOINT"], os.environ["LAB_AGENT_B_NAME"]),
             token, {}, "Report the trusted request identity.",
@@ -54,8 +57,11 @@ def create_app():
 
     @asynccontextmanager
     async def lifespan(app):
-        async with mcp.session_manager.run():
-            yield
+        try:
+            async with mcp.session_manager.run():
+                yield
+        finally:
+            telemetry.close()
 
     app = FastAPI(lifespan=lifespan)
 
@@ -86,15 +92,18 @@ def create_app():
         _, mode, route = PATTERNS[body.pattern]
         if mode == "direct":
             raise HTTPException(400, "This pattern must bypass middleware.")
+        annotate({"lab.pattern": body.pattern, "lab.configuration": body.configuration, "lab.route": route})
         headers = {"x-client-route": route, "x-client-configuration": body.configuration}
         if mode == "obo":
             try:
-                token = await asyncio.to_thread(obo, USER_TOKEN.get())
+                with operation("auth.obo"):
+                    token = await asyncio.to_thread(obo, USER_TOKEN.get())
             except PermissionError:
                 raise HTTPException(403, "Delegated token acquisition failed.") from None
         else:
-            async with workload_credential() as credential:
-                token = (await credential.get_token(FOUNDRY_SCOPE)).token
+            with operation("auth.workload"):
+                async with workload_credential() as credential:
+                    token = (await credential.get_token(FOUNDRY_SCOPE)).token
             headers["x-ms-user-identity"] = USER_CLAIMS.get()["oid"]
         return await invoke(
             responses_url(os.environ["FOUNDRY_PROJECT_ENDPOINT"], os.environ["LAB_AGENT_A_NAME"]),
@@ -103,11 +112,8 @@ def create_app():
 
     app.mount("/tools", mcp.streamable_http_app())
 
-    class AuthBoundary:
-        def __init__(self, inner):
-            self.inner = inner
-
-        async def __call__(self, scope, receive, send):
+    class AuthBoundary(TraceBoundary):
+        async def dispatch(self, scope, receive, send):
             if scope["type"] != "http" or scope["path"] == "/health":
                 await self.inner(scope, receive, send)
                 return
@@ -130,4 +136,4 @@ def create_app():
                 USER_CLAIMS.reset(claims_context)
                 USER_TOKEN.reset(token_context)
 
-    return AuthBoundary(app)
+    return AuthBoundary(app, telemetry, "api.request")

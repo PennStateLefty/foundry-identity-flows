@@ -7,17 +7,20 @@ import os
 USER_TOKEN: ContextVar[str] = ContextVar("user_token")
 USER_CLAIMS: ContextVar[dict] = ContextVar("user_claims")
 
-def workload_credential():
-    from azure.identity.aio import AzureCliCredential, ManagedIdentityCredential, WorkloadIdentityCredential
+def workload_credential(*, asynchronous: bool = True):
+    if asynchronous:
+        from azure.identity import aio as identity
+    else:
+        import azure.identity as identity
 
     mode = os.environ.get("LAB_WORKLOAD_AUTH", "platform")
     if mode == "azure-cli":
-        return AzureCliCredential(tenant_id=os.environ["LAB_TENANT_ID"])
+        return identity.AzureCliCredential(tenant_id=os.environ["LAB_TENANT_ID"])
     if mode != "platform":
         raise ValueError("Unknown workload authentication mode.")
     if os.environ.get("AZURE_FEDERATED_TOKEN_FILE"):
-        return WorkloadIdentityCredential()
-    return ManagedIdentityCredential(client_id=os.environ.get("AZURE_CLIENT_ID"))
+        return identity.WorkloadIdentityCredential()
+    return identity.ManagedIdentityCredential(client_id=os.environ.get("AZURE_CLIENT_ID"))
 
 
 @lru_cache(maxsize=1)

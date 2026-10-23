@@ -39,6 +39,13 @@ For an intentionally local workload experiment only, set
 
 Source: [Entra OBO](https://learn.microsoft.com/entra/identity-platform/v2-oauth2-on-behalf-of-flow).
 
+## Operational monitoring
+
+Operational monitoring is independent of identity delegation. See
+[observability](observability.md) for the common Application Insights/Log
+Analytics destination, explicit telemetry configuration, scoped publisher
+permissions, privacy boundaries, and troubleshooting queries.
+
 ## Backend delegation
 
 Assign the API workload Foundry Agent Consumer on A. Separately create a custom
@@ -100,6 +107,9 @@ Sources: [incoming A2A](https://learn.microsoft.com/azure/foundry/agents/how-to/
 Set `LAB_AGENT_B_NAME` on A. The destination is constructed exclusively from the
 operator-controlled project endpoint and B's validated name. A obtains its own
 Foundry workload token and forwards the current `x-agent-foundry-call-id`.
+This is an experiment, not a guarantee that the Responses endpoint consumes that
+header for user delegation. The deployed single-operator smoke returned no B user
+identity with or without it; see the [recorded result](deployment.md#recorded-single-operator-smoke).
 
 `service` and `drop-context` both omit that header for the Responses experiment.
 They are intentionally equivalent controls here. A call ID is not persisted,

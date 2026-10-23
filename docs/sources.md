@@ -1,6 +1,6 @@
 # Sources and provenance
 
-Research checked 2026-10-22. Prefer current first-party contracts over older
+Research and deployment follow-up checked 2026-10-23. Prefer current first-party contracts over older
 sample READMEs. Recheck support and versions when reproducing.
 
 ## Authoritative contracts
@@ -20,6 +20,11 @@ sample READMEs. Recheck support and versions when reproducing.
 | Custom MCP authentication | https://learn.microsoft.com/azure/foundry/agents/how-to/mcp-authentication |
 | Entra OBO protocol | https://learn.microsoft.com/entra/identity-platform/v2-oauth2-on-behalf-of-flow |
 | azd Bicep | https://learn.microsoft.com/azure/developer/azure-developer-cli/ |
+| Hosted telemetry and reserved settings | https://learn.microsoft.com/azure/foundry/agents/how-to/configure-hosted-agent-telemetry |
+| Foundry Entra trace ingestion | https://learn.microsoft.com/azure/foundry/observability/how-to/trace-ingestion-entra-authentication |
+| Application Insights Entra ingestion | https://learn.microsoft.com/azure/azure-monitor/app/azure-ad-authentication |
+| Container Apps log routing | https://learn.microsoft.com/azure/container-apps/log-options |
+| Foundry project connection schema | https://learn.microsoft.com/azure/templates/microsoft.cognitiveservices/accounts/projects/connections |
 
 ## Implementation references
 
@@ -31,6 +36,7 @@ No source has been copied from unlicensed community repositories.
 | [Foundry samples](https://github.com/microsoft-foundry/foundry-samples/tree/86a5adfa0b61bb80c8fe5009c56cf2f6fa17518e) | `86a5adfa0b61bb80c8fe5009c56cf2f6fa17518e` | MIT | Protocol handler, A2A connection, hosting manifest patterns |
 | [Python Azure SDK](https://github.com/Azure/azure-sdk-for-python/tree/eb4f27da55e7d3834bccd5e07828d58ebaea08e0/sdk/agentserver) | `eb4f27da55e7d3834bccd5e07828d58ebaea08e0` | MIT | Request context and call-ID wire contract |
 | [Agent Framework](https://github.com/microsoft/agent-framework/tree/a8e284ca8ce7c2a6b4a4641ef35e131d75a5cda3) | `a8e284ca8ce7c2a6b4a4641ef35e131d75a5cda3` | MIT | MCP exposure versus identity delegation distinction |
+| [Azure Verified Modules](https://github.com/Azure/bicep-registry-modules) | Version-pinned module references in `infra/resources.bicep` | MIT | Workspace, Insights, registry, environment, and application resource composition |
 | [Community end-to-end OBO](https://github.com/cmw2/foundry-identity-passthrough) | README and middleware inspected | No detected license | Reference only; no code copied |
 | [Community custom MCP/Fabric](https://github.com/anildwarepo/foundry_agents_with_obo_mcp_server) | README inspected | No detected license | Reference only; no code copied |
 

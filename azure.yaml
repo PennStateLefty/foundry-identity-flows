@@ -7,13 +7,9 @@ infra:
   path: infra
 services:
   api:
-    project: .
-    language: python
+    language: docker
     host: containerapp
+    image: ${LAB_API_IMAGE}
     docker:
-      path: Dockerfile
-      platform: linux/amd64
+      imagePassthrough: true
       remoteBuild: false
-      buildArgs:
-        - --secret
-        - id=pip_config,src=${PIP_CONFIG_FILE}

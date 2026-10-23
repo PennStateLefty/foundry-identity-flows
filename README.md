@@ -3,9 +3,10 @@
 A public specification and Python implementation lab for Microsoft Foundry user
 identity propagation. Infrastructure uses **Azure Developer CLI (`azd`) + Bicep**.
 
-**Status: implementation preview. No live Azure results have been recorded.**
-Diagrams describe expected contracts, not proof of deployed behavior. Local tests
-exercise the harness; only two-user deployed runs can establish propagation.
+**Status: deployed implementation preview; two-user identity evidence remains NOT RUN.**
+The [single-operator smoke](docs/deployment.md#recorded-single-operator-smoke)
+verified direct invocation but found missing user identity in chained Responses.
+Diagrams describe experiments, not universal propagation guarantees.
 
 ## Pattern index
 
@@ -25,6 +26,7 @@ Each pattern below starts with a sequence diagram, then enumerated steps, then
 its acceptance criteria. See [configuration](docs/configuration.md),
 [deployment](docs/deployment.md), [evidence](docs/evidence.md), and
 [sources/provenance](docs/sources.md).
+Private troubleshooting telemetry is described in [observability](docs/observability.md).
 The [normative specification](docs/specification.md) defines trust boundaries
 and acceptance requirements.
 
@@ -33,9 +35,10 @@ and acceptance requirements.
 Agents A and B use a **deterministic protocol-2.0 Responses handler**, not a model,
 to remove LLM behavior from authentication experiments. B reports the trusted
 platform user context to authenticated callers. The runner compares it with each
-user's direct B baseline. Raw identifiers stay under ignored `.local/`.
+user's direct B baseline. Runner raw evidence stays under ignored `.local/`;
+private Azure platform diagnostics have independent collection policies.
 
-This proves identity continuity, **not universal downstream data authorization**.
+The acceptance criteria measure identity continuity, **not universal downstream data authorization**.
 P03 tests represented-user context, not OAuth delegated access. Per-user Graph,
 database ACL, session-ownership, cross-tenant, and channel-specific behavior need
 additional tests before making those claims.

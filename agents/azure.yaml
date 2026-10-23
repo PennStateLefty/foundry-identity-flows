@@ -11,23 +11,23 @@ services:
     host: azure.ai.agent
     kind: hosted
     name: identity-agent-a
-    project: ..
-    language: python
+    project: .
+    language: docker
+    image: ${LAB_HOSTED_IMAGE}
+    docker:
+      imagePassthrough: true
+      remoteBuild: false
     protocols:
       - protocol: responses
         version: 2.0.0
-    docker:
-      path: Dockerfile.hosted
-      platform: linux/amd64
-      remoteBuild: false
-      buildArgs:
-        - --secret
-        - id=pip_config,src=${PIP_CONFIG_FILE}
     container:
       resources:
         cpu: "0.5"
         memory: 1Gi
     env:
+      LAB_TELEMETRY_ENABLED: "true"
+      LAB_TELEMETRY_ROLE: identity-agent-a
+      LAB_APPLICATIONINSIGHTS_CONNECTION_STRING: ${APPLICATIONINSIGHTS_CONNECTION_STRING}
       LAB_AGENT_B_NAME: identity-agent-b
       TOOLBOX_USER_ENDPOINT: ${TOOLBOX_USER_ENDPOINT}
       TOOLBOX_SERVICE_ENDPOINT: ${TOOLBOX_SERVICE_ENDPOINT}
@@ -41,19 +41,20 @@ services:
     host: azure.ai.agent
     kind: hosted
     name: identity-agent-b
-    project: ..
-    language: python
+    project: .
+    language: docker
+    image: ${LAB_HOSTED_IMAGE}
+    docker:
+      imagePassthrough: true
+      remoteBuild: false
     protocols:
       - protocol: responses
         version: 2.0.0
-    docker:
-      path: Dockerfile.hosted
-      platform: linux/amd64
-      remoteBuild: false
-      buildArgs:
-        - --secret
-        - id=pip_config,src=${PIP_CONFIG_FILE}
     container:
       resources:
         cpu: "0.5"
         memory: 1Gi
+    env:
+      LAB_TELEMETRY_ENABLED: "true"
+      LAB_TELEMETRY_ROLE: identity-agent-b
+      LAB_APPLICATIONINSIGHTS_CONNECTION_STRING: ${APPLICATIONINSIGHTS_CONNECTION_STRING}

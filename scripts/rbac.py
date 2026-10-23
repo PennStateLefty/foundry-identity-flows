@@ -4,6 +4,7 @@ import argparse
 import json
 import os
 from pathlib import Path
+import re
 import subprocess
 
 
@@ -20,15 +21,23 @@ def main():
     parser.add_argument("--principal", required=True)
     parser.add_argument("--principal-type", choices=("User", "Group", "ServicePrincipal"), required=True)
     parser.add_argument("--scope", required=True)
-    parser.add_argument("--role", choices=("Foundry Agent Consumer", "Foundry User", "AcrPull", "AcrPush", "impersonation"), required=True)
+    parser.add_argument("--role", choices=("Foundry Agent Consumer", "Foundry User", "AcrPull", "AcrPush",
+                                         "Monitoring Metrics Publisher", "impersonation"), required=True)
     parser.add_argument("--apply", action="store_true")
     args = parser.parse_args()
     if command("account", "show")["tenantId"] != args.tenant:
         raise RuntimeError("Tenant mismatch.")
-    provider = "Microsoft.ContainerRegistry/registries/" if args.role in ("AcrPull", "AcrPush") else "Microsoft.CognitiveServices/accounts/"
+    provider = ("Microsoft.ContainerRegistry/registries/" if args.role in ("AcrPull", "AcrPush") else
+                "Microsoft.Insights/components/" if args.role == "Monitoring Metrics Publisher" else
+                "Microsoft.CognitiveServices/accounts/")
     if f"/providers/{provider}".lower() not in args.scope.lower():
         raise ValueError("The resource scope does not match the requested role.")
-    print(f"Plan: grant {args.role} to the specified principal at the specified Foundry scope.")
+    if args.role == "Monitoring Metrics Publisher" and not re.fullmatch(
+        r"/subscriptions/[^/]+/resourceGroups/[^/]+/providers/Microsoft\.Insights/components/[^/]+",
+        args.scope, re.IGNORECASE,
+    ):
+        raise ValueError("Telemetry publishing requires one Application Insights component scope.")
+    print(f"Plan: grant {args.role} to the specified principal at the specified resource scope.")
     if not args.apply:
         return
     if input("Type GRANT to approve this specific role assignment: ") != "GRANT":

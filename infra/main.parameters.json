@@ -6,6 +6,10 @@
     "location": {"value": "${AZURE_LOCATION}"},
     "tenantId": {"value": "${LAB_TENANT_ID}"},
     "apiClientId": {"value": "${LAB_API_CLIENT_ID}"},
-    "apiClientSecret": {"value": "${LAB_API_CLIENT_SECRET}"}
+    "apiClientSecret": {"value": "${LAB_API_CLIENT_SECRET}"},
+    "apiImage": {
+      "value": "${LAB_API_IMAGE}"
+    },
+    "apiRegistryMode": {"value": "${LAB_API_REGISTRY_MODE:-bootstrap}"}
   }
 }

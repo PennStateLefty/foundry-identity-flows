@@ -23,6 +23,15 @@ registry charges, log ingestion, network usage, and A2A retention still apply.
 No universal dollar estimate is asserted; price your selected region using the
 [Azure pricing calculator](https://azure.microsoft.com/pricing/calculator/).
 
+Review both subscription and inherited management-group policies before approval.
+Governance can independently deploy
+[Foundry diagnostic settings](https://learn.microsoft.com/azure/foundry/how-to/diagnostic-logging)
+or enable security monitoring. Disabling application/SDK logging does not disable
+platform diagnostics or guarantee that identity metadata remains local.
+Verify destinations, access, retention, and content capture with the environment
+owner; never automatically bypass policy. Policy-managed workspaces and security
+services are outside this lab's Log Analytics quota and may add charges.
+
 This lab deliberately uses public HTTPS endpoints with application-level Entra
 authentication. It is not a private-network production baseline. The initial
 Container Apps image is a public Microsoft placeholder; no lab API is available

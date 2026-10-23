@@ -1,7 +1,8 @@
 # Deploy and reproduce in your own environment
 
 **Provisioning and deployment have been exercised in one approved environment.**
-This is not a completed two-user identity certification. Review every environment,
+This is not a completed two-user identity certification. Partial interactive
+results are recorded below. Review every environment,
 permission, billable resource, and preview support gate before reproducing it.
 
 ## Recorded single-operator smoke
@@ -30,6 +31,33 @@ HTTP response or a present call ID does not prove user propagation. In particula
 do not treat the chained Responses example as a verified delegation solution.
 P03's custom impersonation role was not created because its definition would
 exceed the reference deployment's resource-group-only authorization.
+
+## Interactive two-user follow-up
+
+On 2026-10-23, a tenant member and a guest authenticated separately against the
+same target tenant. Account names, object IDs, raw probes, and HTTP error bodies
+remain private. The middleware's declared Foundry delegated permission received
+explicitly approved tenant-wide OAuth consent. The guest received an explicitly
+approved Foundry Agent Consumer assignment at the lab project only; both exact
+changes are recorded in the private cleanup inventory.
+
+| Check | Member | Guest |
+|---|---|---|
+| Direct A identity | Present | Present and distinct from member |
+| Middleware OBO to A | Matches direct A | Matches direct A |
+| Direct B baseline | Present | BLOCKED: HTTP 403 requiring `agents/write` |
+| Responses user chain, direct and OBO | FAIL: downstream identity missing | Missing identity observed; strict comparison BLOCKED without B baseline |
+| Responses negative controls | Missing identity, except one direct service-control HTTP 500 | Missing identity observed; strict comparison BLOCKED without B baseline |
+
+The supplemental A-only comparison establishes OBO continuity and distinct
+identities for these two users, not downstream resource authorization.
+The strict matrix retains its direct-B baseline requirement: **2 PASS, 5 FAIL,
+9 BLOCKED, 26 NOT RUN** in [the evidence manifest](../results/latest.json).
+An HTTP error is BLOCKED, not proof of a different principal or target denial.
+No broader agent-write role was granted to bypass the guest's B denial.
+
+The earlier single-operator table is historical, not the latest matrix count.
+Toolbox/A2A/MCP configuration and the P03 permission boundary remain unresolved.
 
 ## Prerequisites and approval boundary
 

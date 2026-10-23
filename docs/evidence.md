@@ -16,6 +16,12 @@ can accept a target-attributed denial for separate, manually verified tests.
 
 ## Live procedure
 
+The latest [interactive follow-up](deployment.md#interactive-two-user-follow-up)
+records distinct member/guest identities and OBO continuity at A.
+The strict B-baseline matrix currently contains 2 PASS, 5 FAIL, 9 BLOCKED,
+and 26 NOT RUN. The guest's missing B baseline prevents strict comparison;
+successful A-only checks are supplemental evidence, not substituted baselines.
+
 Run `identity-lab --config .local/config.json`. Sign in twice for each user:
 once for Foundry and once for the API. Use the same account within each pair,
 and different accounts across pairs. No token cache is persisted.

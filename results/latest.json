@@ -5,18 +5,18 @@
       "alias": "user-a",
       "pattern": "P01",
       "configuration": "user",
-      "status": "NOT RUN",
-      "reason": "not-run",
-      "observation": "unavailable",
+      "status": "PASS",
+      "reason": "user-preserved",
+      "observation": "same-user",
       "expectation": "preserve-user"
     },
     {
       "alias": "user-a",
       "pattern": "P02",
       "configuration": "user",
-      "status": "NOT RUN",
-      "reason": "not-run",
-      "observation": "unavailable",
+      "status": "PASS",
+      "reason": "user-preserved",
+      "observation": "same-user",
       "expectation": "preserve-user"
     },
     {
@@ -86,17 +86,17 @@
       "alias": "user-a",
       "pattern": "P06",
       "configuration": "user",
-      "status": "NOT RUN",
-      "reason": "not-run",
-      "observation": "unavailable",
+      "status": "FAIL",
+      "reason": "identity-missing",
+      "observation": "missing",
       "expectation": "preserve-user"
     },
     {
       "alias": "user-a",
       "pattern": "P06",
       "configuration": "service",
-      "status": "NOT RUN",
-      "reason": "not-run",
+      "status": "BLOCKED",
+      "reason": "http-error",
       "observation": "unavailable",
       "expectation": "different-principal-or-denial"
     },
@@ -104,36 +104,36 @@
       "alias": "user-a",
       "pattern": "P06",
       "configuration": "drop-context",
-      "status": "NOT RUN",
-      "reason": "not-run",
-      "observation": "unavailable",
+      "status": "FAIL",
+      "reason": "identity-missing",
+      "observation": "missing",
       "expectation": "different-principal-or-denial"
     },
     {
       "alias": "user-a",
       "pattern": "P07",
       "configuration": "user",
-      "status": "NOT RUN",
-      "reason": "not-run",
-      "observation": "unavailable",
+      "status": "FAIL",
+      "reason": "identity-missing",
+      "observation": "missing",
       "expectation": "preserve-user"
     },
     {
       "alias": "user-a",
       "pattern": "P07",
       "configuration": "service",
-      "status": "NOT RUN",
-      "reason": "not-run",
-      "observation": "unavailable",
+      "status": "FAIL",
+      "reason": "identity-missing",
+      "observation": "missing",
       "expectation": "different-principal-or-denial"
     },
     {
       "alias": "user-a",
       "pattern": "P07",
       "configuration": "drop-context",
-      "status": "NOT RUN",
-      "reason": "not-run",
-      "observation": "unavailable",
+      "status": "FAIL",
+      "reason": "identity-missing",
+      "observation": "missing",
       "expectation": "different-principal-or-denial"
     },
     {
@@ -194,8 +194,8 @@
       "alias": "user-b",
       "pattern": "P01",
       "configuration": "user",
-      "status": "NOT RUN",
-      "reason": "not-run",
+      "status": "BLOCKED",
+      "reason": "baseline-unavailable",
       "observation": "unavailable",
       "expectation": "preserve-user"
     },
@@ -203,8 +203,8 @@
       "alias": "user-b",
       "pattern": "P02",
       "configuration": "user",
-      "status": "NOT RUN",
-      "reason": "not-run",
+      "status": "BLOCKED",
+      "reason": "baseline-unavailable",
       "observation": "unavailable",
       "expectation": "preserve-user"
     },
@@ -275,8 +275,8 @@
       "alias": "user-b",
       "pattern": "P06",
       "configuration": "user",
-      "status": "NOT RUN",
-      "reason": "not-run",
+      "status": "BLOCKED",
+      "reason": "baseline-unavailable",
       "observation": "unavailable",
       "expectation": "preserve-user"
     },
@@ -284,8 +284,8 @@
       "alias": "user-b",
       "pattern": "P06",
       "configuration": "service",
-      "status": "NOT RUN",
-      "reason": "not-run",
+      "status": "BLOCKED",
+      "reason": "baseline-unavailable",
       "observation": "unavailable",
       "expectation": "different-principal-or-denial"
     },
@@ -293,8 +293,8 @@
       "alias": "user-b",
       "pattern": "P06",
       "configuration": "drop-context",
-      "status": "NOT RUN",
-      "reason": "not-run",
+      "status": "BLOCKED",
+      "reason": "baseline-unavailable",
       "observation": "unavailable",
       "expectation": "different-principal-or-denial"
     },
@@ -302,8 +302,8 @@
       "alias": "user-b",
       "pattern": "P07",
       "configuration": "user",
-      "status": "NOT RUN",
-      "reason": "not-run",
+      "status": "BLOCKED",
+      "reason": "baseline-unavailable",
       "observation": "unavailable",
       "expectation": "preserve-user"
     },
@@ -311,8 +311,8 @@
       "alias": "user-b",
       "pattern": "P07",
       "configuration": "service",
-      "status": "NOT RUN",
-      "reason": "not-run",
+      "status": "BLOCKED",
+      "reason": "baseline-unavailable",
       "observation": "unavailable",
       "expectation": "different-principal-or-denial"
     },
@@ -320,8 +320,8 @@
       "alias": "user-b",
       "pattern": "P07",
       "configuration": "drop-context",
-      "status": "NOT RUN",
-      "reason": "not-run",
+      "status": "BLOCKED",
+      "reason": "baseline-unavailable",
       "observation": "unavailable",
       "expectation": "different-principal-or-denial"
     },
@@ -379,5 +379,13 @@
       "observation": "unavailable",
       "expectation": "different-principal-or-denial"
     }
-  ]
+  ],
+  "interactive_observation": {
+    "date": "2026-10-23",
+    "accounts": "two distinct users in one target tenant; one member and one guest",
+    "direct_a_identities_distinct": true,
+    "obo_matches_direct_a_for_both_users": true,
+    "guest_direct_b_baseline": "BLOCKED",
+    "methodology": "Strict matrix retains direct B baseline requirement; A-only continuity is supplemental."
+  }
 }

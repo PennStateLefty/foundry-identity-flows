@@ -3,7 +3,11 @@
 A public specification and Python implementation lab for Microsoft Foundry user
 identity propagation. Infrastructure uses **Azure Developer CLI (`azd`) + Bicep**.
 
-**Status: deployed implementation preview; two-user identity evidence remains NOT RUN.**
+**Status: deployed implementation preview; partial two-user evidence recorded.**
+Two distinct users in the target tenant preserved their direct-A identities
+through middleware OBO. The strict B-baseline matrix has **2 PASS, 5 FAIL,
+9 BLOCKED, and 26 NOT RUN**; the guest's direct-B baseline remains blocked.
+See the [interactive results](docs/deployment.md#interactive-two-user-follow-up).
 The [single-operator smoke](docs/deployment.md#recorded-single-operator-smoke)
 verified direct invocation but found missing user identity in chained Responses.
 Diagrams describe experiments, not universal propagation guarantees.
@@ -80,8 +84,8 @@ sequenceDiagram
 
 | Check | Expected | Observed |
 |---|---|---|
-| Each user retains identity | Same user | NOT RUN |
-| Distinct users remain distinct | Different baselines | NOT RUN |
+| Each user retains identity | Same user | Member PASS; guest BLOCKED on B baseline |
+| Distinct users remain distinct | Different baselines | Direct A identities distinct; guest B baseline BLOCKED |
 
 Configure user endpoint access and the public client as described in
 [configuration](docs/configuration.md#direct-clients).
@@ -111,7 +115,7 @@ sequenceDiagram
 
 | Check | Expected | Observed |
 |---|---|---|
-| OBO preserves the user | Same user | NOT RUN |
+| OBO preserves the user | Same user | Matches direct A for both; strict B-baseline member PASS, guest BLOCKED |
 | Wrong audience or missing scope | API rejects request | NOT RUN |
 
 Configure [middleware permissions](docs/configuration.md#middleware-obo).
@@ -245,8 +249,8 @@ sequenceDiagram
 
 | Check | Expected | Observed |
 |---|---|---|
-| Workload auth plus call context | Same user | NOT RUN |
-| Workload auth without call context | Different principal or target denial | NOT RUN |
+| Workload auth plus call context | Same user | Member FAIL: identity missing; guest strict comparison BLOCKED |
+| Workload auth without call context | Different principal or target denial | Member drop-context FAIL; service HTTP 500 BLOCKED; guest BLOCKED |
 
 Configure [Responses chaining](docs/configuration.md#responses-chaining).
 Authority: [protocol-2.0 runtime contract](https://learn.microsoft.com/azure/foundry/agents/concepts/hosted-agent-contract#platform-request-headers-container-protocol-200).
@@ -275,8 +279,8 @@ sequenceDiagram
 
 | Check | Expected | Observed |
 |---|---|---|
-| Both boundaries preserve context | Same user | NOT RUN |
-| Missing A-to-B call ID | Different principal or target denial | NOT RUN |
+| Both boundaries preserve context | Same user | Member FAIL: identity missing; guest strict comparison BLOCKED |
+| Missing A-to-B call ID | Different principal or target denial | Member FAIL: identity missing; guest strict comparison BLOCKED |
 
 Configure [middleware OBO](docs/configuration.md#middleware-obo) and
 [Responses chaining](docs/configuration.md#responses-chaining).
